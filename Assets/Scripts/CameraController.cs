@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 
 public class CameraController : MonoBehaviour
@@ -15,8 +16,16 @@ public class CameraController : MonoBehaviour
     public RawImage renderTextureImage; // Reference to the RawImage component displaying the render texture
     public VolumeProfile spectralVolumeProfile; // Reference to the Volume Profile for spectral mode
 
+    public Light cameraFlashLight; // Reference to the light source for the camera flash
+
+    public float flashIntensity = 5f; // Intensity of the camera flash
+    public float flashDuration = 0.1f; // Duration of the camera flash
+
     public Vector3 renderTextureOffset; // Offset for the render texture image position
     public Vector3 renderTextureResetPosition; // Offset for resetting the render texture image position
+
+    public Color spectralBackgroundColor = Color.white; // Background color when spectral mode is enabled
+    public Color defaultBackgroundColor = Color.black; // Background color when spectral mode is disabled
 
     private bool spectralMode = false;
     private List<Volume> volumes = new List<Volume>(); // List to store all Volume components
@@ -71,7 +80,8 @@ public class CameraController : MonoBehaviour
         // Capture photo
         if (Input.GetKeyDown(captureKey) && spectralMode)
         {
-            CapturePhoto();
+            // Perform camera flash effect
+            StartCoroutine(CameraFlashEffect());
         }
 
         // Handle right-click movement
@@ -164,6 +174,19 @@ public class CameraController : MonoBehaviour
         Debug.Log("Photo captured: " + fileName);
     }
 
+    private IEnumerator CameraFlashEffect()
+    {
+        // Enable the light source
+        cameraFlashLight.intensity = flashIntensity;
+        CapturePhoto();
+
+        // Wait for the flash duration
+        yield return new WaitForSeconds(flashDuration);
+
+        // Disable the light source
+        cameraFlashLight.intensity = 0f;
+    }
+
     private void MoveCameraModelToCenter()
     {
         // Set the center position as per your requirement
@@ -198,11 +221,13 @@ public class CameraController : MonoBehaviour
         {
             // If spectral mode is enabled, enable the "Spectral" layer in the main camera's culling mask
             mainCamera.cullingMask |= spectralLayerMask;
+            mainCamera.backgroundColor = spectralBackgroundColor;
         }
         else
         {
             // If spectral mode is disabled, disable the "Spectral" layer in the main camera's culling mask
             mainCamera.cullingMask &= ~spectralLayerMask;
+            mainCamera.backgroundColor = defaultBackgroundColor;
         }
     }
 }
