@@ -4,6 +4,9 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
+using TMPro;
 
 public class CameraController : MonoBehaviour
 {
@@ -41,6 +44,16 @@ public class CameraController : MonoBehaviour
     private bool isZoomingIn = false;
     private bool isZoomingOut = false;
 
+    public GameObject player; // Reference to the player object
+    public float minDistance = 20f; // Minimum distance from the player
+    public float maxDistance = 30f; // Maximum distance from the player
+    public List<NavMeshSurface> navMeshSurfaces;
+
+    public int maxPhotos = 15; // Maximum number of photos the player can take
+    private int photosTaken = 0; // Number of photos already taken
+    public TextMeshProUGUI remainingPhotosText; // Reference to the TMPro text displaying remaining photos
+    public TextMeshProUGUI modeText;
+
     private void Start()
     {
         // Find all Volume components in the hierarchy
@@ -60,6 +73,12 @@ public class CameraController : MonoBehaviour
 
         // Get the renderer component of the enemy object
         enemyRenderer = enemyObject.GetComponent<Renderer>();
+
+        // Populate the list of NavMeshSurfaces if not already assigned
+        if (navMeshSurfaces == null || navMeshSurfaces.Count == 0)
+        {
+            navMeshSurfaces = new List<NavMeshSurface>(GameObject.FindObjectsOfType<NavMeshSurface>());
+        }
     }
 
     private void Update()
@@ -73,10 +92,18 @@ public class CameraController : MonoBehaviour
             if (spectralMode)
             {
                 EnableSpectralMode();
+                if (modeText != null)
+                {
+                    modeText.text = "MODE: Spectral";
+                }
             }
             else
             {
                 DisableSpectralMode();
+                if (modeText != null)
+                {
+                    modeText.text = "MODE: Normal";
+                }
             }
 
         // Toggle enemy visibility based on spectral mode
@@ -84,7 +111,7 @@ public class CameraController : MonoBehaviour
         }
 
         // Capture photo
-        if (Input.GetKeyDown(captureKey) && spectralMode)
+        if (Input.GetKeyDown(captureKey) && photosTaken < maxPhotos)
         {
             // Perform camera flash effect
             StartCoroutine(CameraFlashEffect());
@@ -127,12 +154,25 @@ public class CameraController : MonoBehaviour
             isZoomingOut = false;
         }
 
-    // Update render texture image position
-    // if (isRightClicking)
-    // {
-    // renderTextureImage.rectTransform.localPosition = cameraModel.transform.position + renderTextureOffset;
-    // }
-}
+        // Update remaining photos text
+        UpdateRemainingPhotosText();
+
+        // Update render texture image position
+        // if (isRightClicking)
+        // {
+        // renderTextureImage.rectTransform.localPosition = cameraModel.transform.position + renderTextureOffset;
+        // }
+    }
+
+    // Method to update remaining photos text
+    private void UpdateRemainingPhotosText()
+    {
+        if (remainingPhotosText != null)
+        {
+            int remainingPhotos = maxPhotos - photosTaken;
+            remainingPhotosText.text = "Remaining Photos: " + remainingPhotos.ToString();
+        }
+    }
 
     void ZoomIn()
     {
@@ -197,6 +237,18 @@ public class CameraController : MonoBehaviour
 
     private void CapturePhoto()
     {
+        if (IsEnemyInView())
+        {
+            // Disable the enemy object for 20 seconds
+            StartCoroutine(DisableEnemyForSeconds(20f));
+        }
+
+        // Increment the number of photos taken
+        photosTaken++;
+
+        // Update remaining photos text
+        UpdateRemainingPhotosText();
+
         // Store the previous render texture
         RenderTexture previousRenderTexture = mainCamera.targetTexture;
 
@@ -227,6 +279,111 @@ public class CameraController : MonoBehaviour
         string fileName = "photo_" + System.DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".png";
         System.IO.File.WriteAllBytes(fileName, bytes);
         Debug.Log("Photo captured: " + fileName);
+    }
+
+    private IEnumerator DisableEnemyForSeconds(float duration)
+    {
+        // Disable the enemy object
+        enemyObject.SetActive(false);
+
+        // Wait for the specified duration
+        yield return new WaitForSeconds(duration);
+
+        // Re-enable the enemy object
+        enemyObject.SetActive(true);
+
+        // Teleport the enemy to the furthest point on a random NavMesh surface
+        TeleportEnemyToRandomNavMesh();
+    }
+
+    private bool IsEnemyInView()
+    {
+        // Get the direction from the camera to the enemy
+        Vector3 directionToEnemy = enemyObject.transform.position - mainCamera.transform.position;
+
+        // Calculate the angle between the camera's forward direction and the direction to the enemy
+        float angle = Vector3.Angle(mainCamera.transform.forward, directionToEnemy);
+
+        // Check if the angle is within the camera's field of view
+        if (angle <= mainCamera.fieldOfView / 2f)
+        {
+            // Check if the enemy is within the camera's view distance
+            RaycastHit hit;
+            if (Physics.Raycast(mainCamera.transform.position, directionToEnemy, out hit, Mathf.Infinity))
+            {
+                if (hit.collider.CompareTag("Enemy"))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private void TeleportEnemyToRandomNavMesh()
+    {
+        if (navMeshSurfaces == null || navMeshSurfaces.Count == 0)
+        {
+            Debug.LogWarning("No NavMesh surfaces defined.");
+            return;
+        }
+
+        // Shuffle the list of navMeshSurfaces
+        Shuffle(navMeshSurfaces);
+
+        // Get a random NavMesh surface from the list
+        NavMeshSurface randomSurface = navMeshSurfaces[Random.Range(0, navMeshSurfaces.Count)];
+
+        // Get a random point within the NavMesh surface bounds
+        Vector3 randomPosition = GetRandomPointOnNavMesh(randomSurface);
+
+        // Teleport the enemy to the random position
+        enemyObject.transform.position = randomPosition;
+    }
+
+    private Vector3 GetRandomPointOnNavMesh(NavMeshSurface surface)
+    {
+        // Get all colliders in the children of the NavMesh surface
+        Collider[] colliders = surface.GetComponentsInChildren<Collider>();
+        if (colliders.Length == 0)
+        {
+            Debug.LogWarning("No colliders found in the children of a NavMesh surface.");
+            return Vector3.zero;
+        }
+
+        // Combine bounds of all colliders
+        Bounds combinedBounds = new Bounds();
+        foreach (Collider collider in colliders)
+        {
+            combinedBounds.Encapsulate(collider.bounds);
+        }
+
+        // Generate a random point within the combined bounds
+        Vector3 randomPoint = combinedBounds.center + Random.insideUnitSphere * combinedBounds.extents.magnitude;
+
+        // Sample the point on the NavMesh
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomPoint, out hit, combinedBounds.extents.magnitude, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+        else
+        {
+            Debug.LogWarning("Could not find a valid position on the NavMesh surface.");
+            return Vector3.zero;
+        }
+    }
+
+    private void Shuffle<T>(List<T> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int randomIndex = Random.Range(i, list.Count);
+            T temp = list[i];
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
     }
 
     private IEnumerator CameraFlashEffect()
