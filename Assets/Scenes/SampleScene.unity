@@ -1137,10 +1137,12 @@ MonoBehaviour:
   mainCamera: {fileID: 2126621962}
   playerCamera: {fileID: 0}
   cameraModel: {fileID: 0}
-  renderTextureImage: {fileID: 0}
   spectralVolumeProfile: {fileID: 0}
-  renderTextureOffset: {x: 0, y: 0, z: 0}
-  renderTextureResetPosition: {x: 0, y: 0, z: 0}
+  cameraFlashLight: {fileID: 0}
+  flashIntensity: 5
+  flashDuration: 0.1
+  spectralBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &311852425615651624
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour
     public Camera mainCamera; // Reference to the main camera
     public Camera playerCamera;
     public GameObject cameraModel; // Reference to the camera model object
-    public RawImage renderTextureImage; // Reference to the RawImage component displaying the render texture
+    // public RawImage renderTextureImage; // Reference to the RawImage component displaying the render texture
     public VolumeProfile spectralVolumeProfile; // Reference to the Volume Profile for spectral mode
 
     public Light cameraFlashLight; // Reference to the light source for the camera flash
@@ -21,19 +21,25 @@ public class CameraController : MonoBehaviour
     public float flashIntensity = 5f; // Intensity of the camera flash
     public float flashDuration = 0.1f; // Duration of the camera flash
 
-    public Vector3 renderTextureOffset; // Offset for the render texture image position
-    public Vector3 renderTextureResetPosition; // Offset for resetting the render texture image position
+    // public Vector3 renderTextureOffset; // Offset for the render texture image position
+    // public Vector3 renderTextureResetPosition; // Offset for resetting the render texture image position
 
     public Color spectralBackgroundColor = Color.white; // Background color when spectral mode is enabled
     public Color defaultBackgroundColor = Color.black; // Background color when spectral mode is disabled
 
-    private bool spectralMode = false;
+    public static bool spectralMode = false;
     private List<Volume> volumes = new List<Volume>(); // List to store all Volume components
     private Vector3 originalModelPosition; // Original position of the camera model object
     private Vector3 initialOffset; // Initial offset between camera model and player
     private bool isRightClicking = false; // Flag to track right-click state
     private GameObject enemyObject; // Reference to the enemy object
     private Renderer enemyRenderer; // Reference to the renderer of the enemy object
+
+    public float minZoomFOV = 20f; // Minimum FOV for zooming out
+    public float maxZoomFOV = 60f; // Maximum FOV for zooming in
+    public float zoomSpeed = 1f; // Speed of zooming
+    private bool isZoomingIn = false;
+    private bool isZoomingOut = false;
 
     private void Start()
     {
@@ -73,8 +79,8 @@ public class CameraController : MonoBehaviour
                 DisableSpectralMode();
             }
 
-            // Toggle enemy visibility based on spectral mode
-            ToggleEnemyVisibility();
+        // Toggle enemy visibility based on spectral mode
+        ToggleEnemyVisibility();
         }
 
         // Capture photo
@@ -96,11 +102,60 @@ public class CameraController : MonoBehaviour
             MoveCameraModelToOriginalPosition();
         }
 
-        // Update render texture image position
-        if (isRightClicking)
+        // Get mouse scroll wheel input
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+
+        // Zoom in
+        if (scrollInput > 0f && !isZoomingOut)
         {
-            renderTextureImage.rectTransform.localPosition = cameraModel.transform.position + renderTextureOffset;
+            isZoomingIn = true;
+            ZoomIn();
         }
+        else
+        {
+            isZoomingIn = false;
+        }
+
+        // Zoom out
+        if (scrollInput < 0f && !isZoomingIn)
+        {
+            isZoomingOut = true;
+            ZoomOut();
+        }
+        else
+        {
+            isZoomingOut = false;
+        }
+
+    // Update render texture image position
+    // if (isRightClicking)
+    // {
+    // renderTextureImage.rectTransform.localPosition = cameraModel.transform.position + renderTextureOffset;
+    // }
+}
+
+    void ZoomIn()
+    {
+        // Calculate new FOV for zooming in
+        float newFOV = mainCamera.fieldOfView - zoomSpeed;
+
+        // Clamp FOV within the specified range
+        newFOV = Mathf.Clamp(newFOV, minZoomFOV, maxZoomFOV);
+
+        // Apply the new FOV to the camera
+        mainCamera.fieldOfView = newFOV;
+    }
+
+    void ZoomOut()
+    {
+        // Calculate new FOV for zooming out
+        float newFOV = mainCamera.fieldOfView + zoomSpeed;
+
+        // Clamp FOV within the specified range
+        newFOV = Mathf.Clamp(newFOV, minZoomFOV, maxZoomFOV);
+
+        // Apply the new FOV to the camera
+        mainCamera.fieldOfView = newFOV;
     }
 
     private void FindAllVolumes()
@@ -190,7 +245,7 @@ public class CameraController : MonoBehaviour
     private void MoveCameraModelToCenter()
     {
         // Set the center position as per your requirement
-        Vector3 centerPosition = new Vector3(0f, -0.5f, 0f);
+        Vector3 centerPosition = new Vector3(0f, -0.25f, 1.132f);
 
         // Convert center position to world point
         Vector3 worldCenter = playerCamera.transform.TransformPoint(centerPosition);
@@ -208,7 +263,7 @@ public class CameraController : MonoBehaviour
         cameraModel.transform.localPosition = originalModelPosition;
 
         // Reset render texture image position to its original position
-        renderTextureImage.rectTransform.localPosition = renderTextureResetPosition;
+        // renderTextureImage.rectTransform.localPosition = renderTextureResetPosition;
     }
 
     private void ToggleEnemyVisibility()

@@ -612,7 +612,7 @@ GameObject:
   - component: {fileID: 502108690}
   - component: {fileID: 502108691}
   m_Layer: 0
-  m_Name: Spot Light
+  m_Name: Camera Flash Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -730,7 +730,7 @@ GameObject:
   - component: {fileID: 805376017}
   - component: {fileID: 805376016}
   m_Layer: 3
-  m_Name: Spot Light
+  m_Name: Camera Screen Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1402,16 +1402,15 @@ MonoBehaviour:
   mainCamera: {fileID: 2126621962}
   playerCamera: {fileID: 280781198}
   cameraModel: {fileID: 311852425615651624}
-  renderTextureImage: {fileID: 1145568701}
   spectralVolumeProfile: {fileID: 11400000, guid: d09e2ae8f00d545fda91730611dad351,
     type: 2}
   cameraFlashLight: {fileID: 502108690}
   flashIntensity: 20
   flashDuration: 0.2
-  renderTextureOffset: {x: -44, y: -117, z: 0}
-  renderTextureResetPosition: {x: 479, y: -343, z: 0}
   spectralBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   defaultBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
+  ambientColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  boostedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &311852425615651624
 GameObject:
   m_ObjectHideFlags: 0

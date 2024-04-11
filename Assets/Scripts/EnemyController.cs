@@ -45,14 +45,21 @@ public class EnemyController : MonoBehaviour
 
     void Roam()
     {
-        // Generate a random destination within a radius around the enemy
-        Vector3 randomDirection = Random.insideUnitSphere * detectionRadius;
-        randomDirection += transform.position;
-        NavMeshHit navHit;
-        NavMesh.SamplePosition(randomDirection, out navHit, detectionRadius, NavMesh.AllAreas);
+        // Check if the enemy has reached its current destination
+        if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+        {
+            // Generate a random destination within a larger radius around the enemy
+            Vector3 randomDirection = Random.insideUnitSphere * detectionRadius * 2f;
+            randomDirection += transform.position;
+            NavMeshHit navHit;
 
-        // Set the destination to the random position
-        navMeshAgent.SetDestination(navHit.position);
+            // Sample for a valid position within the NavMesh
+            if (NavMesh.SamplePosition(randomDirection, out navHit, detectionRadius * 2f, NavMesh.AllAreas))
+            {
+                // Set the destination to the random position
+                navMeshAgent.SetDestination(navHit.position);
+            }
+        }
     }
 }
 
