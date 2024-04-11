@@ -244,17 +244,12 @@ public class CameraController : MonoBehaviour
 
     private void MoveCameraModelToCenter()
     {
-        // Set the center position as per your requirement
-        Vector3 centerPosition = new Vector3(0f, -0.25f, 1.132f);
+        // Set the local position of the camera model relative to the player's camera
+        Vector3 localCenter = new Vector3(0f, -0.25f, 1.6f); // Adjust the local position as needed
+        Vector3 targetPosition = playerCamera.transform.TransformPoint(localCenter);
 
-        // Convert center position to world point
-        Vector3 worldCenter = playerCamera.transform.TransformPoint(centerPosition);
-
-        // Keep the z coordinate of the camera model and update x and y coordinates
-        worldCenter.z = cameraModel.transform.position.z;
-
-        // Move camera model to the specified world center position
-        cameraModel.transform.position = worldCenter;
+        // Move the camera model to the target position
+        cameraModel.transform.position = targetPosition;
     }
 
     private void MoveCameraModelToOriginalPosition()
