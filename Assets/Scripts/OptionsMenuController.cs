@@ -61,6 +61,8 @@ public class OptionsMenuController : MonoBehaviour
         // Close options menu
         Time.timeScale = 1f; // Restore previous time scale
         Cursor.lockState = previousCursorLockMode; // Restore previous cursor lock mode
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the center of the screen
+        Cursor.visible = false; // Hide the cursor
         if (isPlayerFrozen && firstPersonController != null)
         {
             firstPersonController.enabled = true; // Unfreeze player movement
