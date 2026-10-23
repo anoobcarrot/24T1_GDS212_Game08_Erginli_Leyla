@@ -212267,39 +212267,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
         type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 74857581}
-    - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: AdjustVolume
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: OptionsManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 3119935094824554376, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 4037083579642614363, guid: 984b579002742472aa8124f5aad1fae2,
         type: 3}
       propertyPath: m_Pivot.x
@@ -212437,39 +212407,9 @@ PrefabInstance:
       objectReference: {fileID: 74857581}
     - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 74857583}
-    - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseOptions
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: OptionsMenuController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 5302854903581925041, guid: 984b579002742472aa8124f5aad1fae2,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 5580027395318935130, guid: 984b579002742472aa8124f5aad1fae2,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
